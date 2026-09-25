@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sushi Roll — Tu calculadora</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:radial-gradient(1200px 600px at 15% -10%,#16305c 0%,transparent 55%),
+               radial-gradient(1000px 500px at 110% 110%,#1b3a6b 0%,transparent 55%),
+               #0a1122;
+    color:#e8edf7; padding:26px 14px 50px;
+  }
+  .wrap { max-width:820px; margin:0 auto; }
+  header { text-align:center; margin-bottom:22px; }
+  .badge { display:inline-block; font-size:12px; padding:5px 14px; border-radius:8px; border:1px solid #ffb02088; color:#ffd27a; background:#ffb02014; font-weight:700; letter-spacing:1px; }
+  h1 { font-size:26px; margin-top:10px; }
+  h1 span { color:#ffb020; }
+  .sub { color:#a8b9d9; margin-top:6px; font-size:13.5px; }
+
+  .layout { display:grid; grid-template-columns:1fr; gap:16px; }
+  .panel { background:#101a30; border:1px solid #22345a; border-radius:16px; padding:18px; }
+  .panel h2 { font-size:14px; color:#ffd27a; margin-bottom:12px; letter-spacing:.5px; }
+
+  .field { margin-bottom:14px; }
+  .field label { display:block; font-size:13px; color:#b9c8e5; margin-bottom:5px; }
+  .field label small { display:block; color:#5c6d8f; font-size:11px; margin-top:2px; }
+  .field input[type=number] {
+    width:100%; background:#0e172a; border:1px solid #2a3d66; border-radius:10px;
+    color:#fff; font-size:17px; font-weight:700; padding:10px 14px; outline:none;
+  }
+  .field input[type=number]:focus { border-color:#ffb020; }
+
+  .btn { width:100%; background:linear-gradient(135deg,#ffb020,#ff8c1a); color:#16121a; border:none; border-radius:12px; padding:14px; font-size:16px; font-weight:800; cursor:pointer; letter-spacing:.5px; }
+  .btn:active { transform:scale(.98); }
+
+  .results { display:none; flex-direction:column; gap:12px; margin-top:4px; }
+  .results.show { display:flex; }
+  .hero { background:linear-gradient(135deg,#ffb02022,#ffb02008); border:1px solid #ffb02066; border-radius:14px; padding:16px; text-align:center; }
+  .hero .lbl { font-size:12px; color:#ffd27a; letter-spacing:1px; }
+  .hero .val { font-size:32px; font-weight:900; color:#ffb020; margin-top:4px; }
+  .hero .sub2 { font-size:11.5px; color:#a8b9d9; margin-top:4px; }
+  .kpi { background:#0e172a; border:1px solid #1c2d4f; border-radius:14px; padding:13px 16px; display:flex; justify-content:space-between; align-items:center; }
+  .kpi .lbl { font-size:12px; color:#8ea3c9; }
+  .kpi .val { font-size:20px; font-weight:800; color:#fff; }
+  .kpi .val.gold { color:#ffb020; }
+  .kpi .val.green { color:#4ade80; }
+  .kpi .hint { display:block; font-size:10.5px; color:#5c6d8f; }
+  .tip { font-size:11px; color:#5c6d8f; line-height:1.6; text-align:center; margin-top:12px; }
+  footer { text-align:center; color:#5c6d8f; font-size:11.5px; margin-top:24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="badge">HECHO A LA MEDIDA</span>
+    <h1>¿Cuánto puede ganar <span>tu restaurante</span>?</h1>
+    <div class="sub">Pon tus números reales y mira el resultado en segundos. Sin compromiso.</div>
+  </header>
+
+  <div class="layout">
+    <div class="panel">
+      <h2>1️⃣ CUENTAS DE TU NEGOCIO</h2>
+      <div class="field">
+        <label>¿Cuántos pedidos haces al día?
+          <small>Promedio normal. Si tienes un día malo y uno bueno, pon el normal.</small>
+        </label>
+        <input type="number" id="pedidos" value="5" min="0" step="1">
+      </div>
+      <div class="field">
+        <label>¿Cuánto cuesta el pedido promedio? (€)
+          <small>El combo que más se pide, ej: 20 piezas a €22.</small>
+        </label>
+        <input type="number" id="ticket" value="18" min="0" step="1">
+      </div>
+      <div class="field">
+        <label>¿De cada 10 pedidos que preguntan por WhatsApp, cuántos NO terminan comprando hoy?
+          <small>Por contestar tarde o no contestar. Si no sabes, deja 5.</small>
+        </label>
+        <input type="number" id="perdidos" value="5" min="0" max="10" step="1">
+      </div>
+      <div class="field">
+        <label>¿Cuánto gastas al mes en total en el restaurante? (€)
+          <small>Comida, personal, local, luz, todo.</small>
+        </label>
+        <input type="number" id="gastos" value="12000" min="0" step="500">
+      </div>
+      <button class="btn" onclick="calc()">CALCULAR MI NÚMERO</button>
+    </div>
+
+    <div class="results" id="res">
+      <div class="kpi">
+        <div><span class="lbl">Ventas actuales por mes</span></div>
+        <span class="val" id="r_ventas">€0</span>
+      </div>
+      <div class="kpi">
+        <div><span class="lbl">Pedidos que estás dejando perder cada mes</span><span class="hint">los que preguntan y no compran</span></div>
+        <span class="val" id="r_perdidos">0</span>
+      </div>
+      <div class="hero">
+        <div class="lbl">PLATA QUE ESTÁS DEJANDO IR CADA MES</div>
+        <div class="val" id="r_extra">€0</div>
+        <div class="sub2">pedidos que se van por no responder a tiempo</div>
+      </div>
+      <div class="kpi">
+        <div><span class="lbl">Ganancia actual (aprox.)</span></div>
+        <span class="val" id="r_gana">€0</span>
+      </div>
+      <div class="kpi">
+        <div><span class="lbl">Ganancia si recuperas los pedidos perdidos</span></div>
+        <span class="val green" id="r_gana2">€0</span>
+      </div>
+      <div class="panel" style="border-color:#2a4a8a;">
+        <h2>2️⃣ TUS MOTORIZADOS (ganan más sin costarte nada)</h2>
+        <div class="field">
+          <label>¿Cuánto gana hoy cada motorizado al mes? ($)</label>
+          <input type="number" id="mot" value="150" min="0" step="10">
+        </div>
+      </div>
+      <div class="kpi">
+        <div><span class="lbl">Cada motorizado con más pedidos</span><span class="hint">más pedidos = más viajes = más ganan</span></div>
+        <span class="val gold" id="r_mot">$0</span>
+      </div>
+      <div class="kpi">
+        <div><span class="lbl">A paliza tus costos: si recuperas lo perdido…</span></div>
+        <span class="val green" id="r_ghl">€0</span>
+      </div>
+
+      <div class="tip">Con estos números reales, te armamos el sistema a medida que responde 24/7, no deja pedido sin contestar y te dice quién te dejó de comprar para volver a llamarlo — con todo lo que te ahorras en tiempo y lo que ganas de más, el sistema se paga solo (y de sobra) desde el primer mes.</div>
+    </div>
+  </div>
+
+  <footer><b>CALCULADORA Sushi Roll</b> — pone tus números reales, sin compromiso</footer>
+</div>
+
+<script>
+  const fmtE = n => '€' + Math.round(n).toLocaleString('en-US');
+  const fmtD = n => '$' + Math.round(n).toLocaleString('en-US');
+  const fmtn = n => Math.round(n).toLocaleString('en-US');
+  function calc(){
+    const ped = Math.max(0, +$('pedidos').value || 0);
+    const tick= Math.max(0, +$('ticket').value || 0);
+    const perd= Math.max(0, Math.min(10, +$('perdidos').value || 0));
+    const gas = Math.max(0, +$('gastos').value || 0);
+    const mot = Math.max(0, +$('mot').value || 0);
+
+    const perdK = perd / 10;
+    const pedMes = ped * 30;
+    const ventas = pedMes * tick;
+    const perdidosMes = Math.round(pedMes * perdK);
+    const extra = perdidosMes * tick;
+    const perdidosRecuperables = Math.round(perdidosMes * 0.8); // se recupera ~80%
+    const extraReal = perdidosRecuperables * tick;
+
+    const gana = ventas - gas;
+    const gana2 = ventas + extraReal - gas;
+
+    const motNew = mot + mot * (extraReal / Math.max(1, ventas));
+
+    $('r_ventas').textContent = fmtE(ventas);
+    $('r_perdidos').textContent = perdidosMes;
+    $('r_extra').textContent = fmtE(extra);
+    $('r_gana').textContent = fmtE(gana);
+    $('r_gana2').textContent = fmtE(gana2);
+    $('r_mot').textContent = fmtD(motNew);
+    $('r_ghl').textContent = fmtE(extraReal);
+    document.getElementById('res').classList.add('show');
+  }
+  const $ = id => document.getElementById(id);
+</script>
+</body>
+</html>

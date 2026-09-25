@@ -1,0 +1,266 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexusAlphaAI — Calculadora Sushi Roll</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:radial-gradient(1200px 600px at 15% -10%,#16305c 0%,transparent 55%),
+               radial-gradient(1000px 500px at 110% 110%,#1b3a6b 0%,transparent 55%),
+               #0a1122;
+    color:#e8edf7; padding:30px 16px 50px;
+  }
+  .wrap { max-width:980px; margin:0 auto; }
+  header { text-align:center; margin-bottom:24px; }
+  .badge { display:inline-block; font-size:12px; padding:5px 14px; border-radius:8px; border:1px solid #ffb02088; color:#ffd27a; background:#ffb02014; font-weight:700; letter-spacing:1px; }
+  h1 { font-size:28px; margin-top:10px; }
+  h1 span { color:#ffb020; }
+  .sub { color:#a8b9d9; margin-top:6px; font-size:13.5px; }
+
+  .layout { display:grid; grid-template-columns:360px 1fr; gap:18px; align-items:start; }
+  @media (max-width:760px){ .layout { grid-template-columns:1fr; } }
+
+  .panel { background:#101a30; border:1px solid #22345a; border-radius:16px; padding:18px; }
+  .panel h2 { font-size:14px; color:#ffd27a; margin-bottom:14px; letter-spacing:.5px; }
+  .field { margin-bottom:13px; }
+  .field label { display:flex; justify-content:space-between; font-size:12.5px; color:#b9c8e5; margin-bottom:4px; }
+  .field label b { color:#fff; font-size:12.5px; }
+  .field input[type=range] { width:100%; accent-color:#ffb020; height:22px; cursor:pointer; }
+
+  .results { display:flex; flex-direction:column; gap:12px; }
+  .kpi { background:#0e172a; border:1px solid #1c2d4f; border-radius:14px; padding:13px 16px; display:flex; justify-content:space-between; align-items:center; }
+  .kpi .lbl { font-size:12px; color:#8ea3c9; }
+  .kpi .val { font-size:21px; font-weight:800; color:#fff; }
+  .kpi .val.gold { color:#ffb020; }
+  .kpi .val.green { color:#4ade80; }
+  .kpi .hint { display:block; font-size:10.5px; color:#5c6d8f; }
+  .hero { background:linear-gradient(135deg,#ffb02022,#ffb02008); border:1px solid #ffb02066; border-radius:14px; padding:16px; text-align:center; }
+  .hero .lbl { font-size:12px; color:#ffd27a; letter-spacing:1px; }
+  .hero .val { font-size:32px; font-weight:900; color:#ffb020; margin-top:4px; }
+  .hero .sub2 { font-size:11.5px; color:#a8b9d9; margin-top:4px; }
+
+  .bands { margin-top:2px; }
+  .band { border-radius:12px; padding:10px 14px; margin-bottom:8px; font-size:12.5px; display:flex; justify-content:space-between; align-items:center; }
+  .band small { display:block; color:#5c6d8f; font-size:10.5px; }
+  .fee { border:1px solid #22345a; background:#0e172a; color:#c6d3ec; }
+  .fee.on { border:1px solid #ffb02088; background:#ffb02014; color:#ffd27a; }
+  .fee .amount { font-weight:800; font-size:14px; }
+
+  footer { text-align:center; color:#5c6d8f; font-size:11.5px; margin-top:24px; }
+  .note { font-size:11px; color:#5c6d8f; line-height:1.6; text-align:center; margin-top:12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="badge">NEXUSALPHA AI · SIMULADOR v2.1</span>
+    <h1>Calculadora <span>Sushi Roll</span></h1>
+    <div class="sub">Calibrada con datos reales: 175K seguidores · ~250 likes/post · menú en € · motorizados incluidos</div>
+  </header>
+
+  <div class="layout">
+    <!-- Controles -->
+    <div class="panel">
+      <h2>AJUSTES — DATOS REALES</h2>
+      <div class="field">
+        <label><span>Seguidores Instagram</span><b id="v_fol">175000</b></label>
+        <input type="range" id="fol" min="50000" max="300000" step="1000" value="175000">
+      </div>
+      <div class="field">
+        <label><span>Likes promedio por post</span><b id="v_likes">250</b></label>
+        <input type="range" id="likes" min="50" max="2000" step="10" value="250">
+      </div>
+      <div class="field">
+        <label><span>Publicaciones por mes</span><b id="v_posts">30</b></label>
+        <input type="range" id="posts" min="8" max="90" step="1" value="30">
+      </div>
+      <div class="field">
+        <label><span>% que va a WhatsApp</span><b id="v_cta">1.5%</b></label>
+        <input type="range" id="cta" min="0.2" max="5" step="0.1" value="1.5">
+      </div>
+      <div class="field">
+        <label><span>% que cierra HOY (respuesta lenta)</span><b id="v_today">20%</b></label>
+        <input type="range" id="today" min="5" max="50" step="1" value="20">
+      </div>
+      <div class="field">
+        <label><span>% que cierra CON BOT (24/7)</span><b id="v_bot">40%</b></label>
+        <input type="range" id="bot" min="10" max="70" step="1" value="40">
+      </div>
+      <div class="field">
+        <label><span>Ticket promedio (€)</span><b id="v_ticket">18</b></label>
+        <input type="range" id="ticket" min="8" max="40" step="1" value="18">
+      </div>
+      <div class="field">
+        <label><span>Costo operativo mensual (€)</span><b id="v_cost">28000</b></label>
+        <input type="range" id="cost" min="10000" max="60000" step="500" value="28000">
+      </div>
+      <div class="field">
+        <label><span>% de costos (comida+personal+delivery)</span><b id="v_food">55%</b></label>
+        <input type="range" id="food" min="35" max="75" step="1" value="55">
+      </div>
+
+      <h2 style="margin-top:18px;">MOTORIZADOS — PAGAN EL SISTEMA (USD)</h2>
+      <div class="field">
+        <label><span>Motorizados activos</span><b id="v_drivers">3</b></label>
+        <input type="range" id="drivers" min="1" max="8" step="1" value="3">
+      </div>
+      <div class="field">
+        <label><span>Ingreso actual por motorizado ($/mes)</span><b id="v_mot">600</b></label>
+        <input type="range" id="mot" min="200" max="2000" step="50" value="600">
+      </div>
+      <div class="field">
+        <label><span>Aporte del motorizado ($/día)</span><b id="v_daily">5</b></label>
+        <input type="range" id="daily" min="0" max="10" step="0.5" value="5">
+      </div>
+    </div>
+
+    <!-- Resultados -->
+    <div class="results">
+      <div class="kpi">
+        <div><span class="lbl">Alcance mensual estimado</span><span class="hint" style="display:block;font-size:10.5px;color:#5c6d8f">likes ≈ 10% del alcance de cada post</span></div>
+        <span class="val" id="r_reach">0</span>
+      </div>
+      <div class="kpi">
+        <div><span class="lbl">Chats de WhatsApp / mes</span><span class="hint" style="display:block;font-size:10.5px;color:#5c6d8f">alcance × % que escribe</span></div>
+        <span class="val" id="r_chats">0</span>
+      </div>
+      <div class="kpi">
+        <div><span class="lbl">Pedidos HOY (/mes)</span><span class="hint" style="display:block;font-size:10.5px;color:#5c6d8f">chats × cierre actual</span></div>
+        <span class="val" id="r_today">0</span>
+      </div>
+      <div class="kpi">
+        <div><span class="lbl">Pedidos CON BOT (/mes)</span><span class="hint" style="display:block;font-size:10.5px;color:#5c6d8f">chats × cierre con bot</span></div>
+        <span class="val green" id="r_bot">0</span>
+      </div>
+
+      <div class="hero">
+        <div class="lbl">VENTAS EXTRA MENSUALES (bot 24/7)</div>
+        <div class="val" id="r_extra">€0</div>
+        <div class="sub2">pedidos que HOY se pierden por respuesta lenta y sin seguimiento</div>
+      </div>
+
+      <div class="kpi">
+        <div><span class="lbl">5% de seguidores monetizados (=8,750 compras)</span><span class="hint" style="display:block;font-size:10.5px;color:#5c6d8f">ticket × 8,750</span></div>
+        <span class="val gold" id="r_5pct">€0</span>
+      </div>
+
+      <div class="kpi">
+        <div><span class="lbl">Ventas totales estimadas/mes</span><span class="hint" style="display:block;font-size:10.5px;color:#5c6d8f">costo / (1 − %costos)</span></div>
+        <span class="val" id="r_sales">€0</span>
+      </div>
+
+      <!-- Efecto en cadena: motorizados -->
+      <div class="panel" style="padding:14px;border-color:#2a4a8a;">
+        <h2 style="margin-bottom:10px;">EL EFECTO EN CADENA — MOTORIZADOS</h2>
+        <div class="kpi" style="border:none;background:#12203c;">
+          <div><span class="lbl">Ingreso motorizado CON sistema</span><span class="hint" style="display:block;font-size:10.5px;color:#5c6d8f">súbidas igual que pedidos (+ganancia de conversión)</span></div>
+          <span class="val gold" id="r_mot_new">$0</span>
+        </div>
+        <div class="kpi" style="border:none;background:#12203c;">
+          <div><span class="lbl">Neto tras pagar el sistema ($/día)</span><span class="hint" style="display:block;font-size:10.5px;color:#5c6d8f">gana más, paga poco, le sobra</span></div>
+          <span class="val green" id="r_mot_neto">$0</span>
+        </div>
+        <div class="kpi" style="border:none;background:#12203c;">
+          <div><span class="lbl">Aporte total motorizados / mes</span><span class="hint" style="display:block;font-size:10.5px;color:#5c6d8f">n × $/día × 30</span></div>
+          <span class="val" id="r_mot_aporte">$0</span>
+        </div>
+        <div class="kpi" style="border:none;background:#12203c;">
+          <div><span class="lbl">Cobertura del GHL (≈$597/mes)</span><span class="hint" style="display:block;font-size:10.5px;color:#5c6d8f">cuánto pagan los motorizados de tu SaaS</span></div>
+          <span class="val" id="r_mot_ghl">0%</span>
+        </div>
+      </div>
+
+      <div class="panel bands" style="padding:14px;">
+        <h2 style="margin-bottom:8px;">TU FEE (anclado al valor generado)</h2>
+        <div class="band fee on"><span><b>Modelo fijo + 3% de ventas nuevas</b><small>bot + CRM + reportes</small></span><span class="amount" id="r_fee1">€0/mes</span></div>
+        <div class="band fee"><span><b>Premium</b><small>+ SEO local & Google Maps</small></span><span class="amount" id="r_fee2">€1,000/mes</span></div>
+        <div class="band fee"><span><b>Participación (5% ventas nuevas)</b><small>te pagas con resultados</small></span><span class="amount" id="r_fee3">€0/mes</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">Base = conversión de la audiencia que YA existe (200–270 likes/post). Con el bot se duplica el cierre sin comprar un solo anuncio. Ticket sugerido ~€18–22 según promos. Motorizados: no tienen sueldo, viven de las tarifas de delivery que paga el cliente — el sistema les sube sus viajes y pagan €0 de costo al restaurante. Ganar-ganar: dueño + motorizados + agencia.</div>
+  <footer><b>NEXUSALPHA AI</b> — Calculadora de rentabilidad · v2.1 · + motorizados</footer>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  const fmtE = n => '€' + Math.round(n).toLocaleString('en-US');
+  const fmtD = n => '$' + Math.round(n).toLocaleString('en-US');
+  const fmtn = n => Math.round(n).toLocaleString('en-US');
+  const GHL = 597;
+  function calc(){
+    const fol    = +$('fol').value;
+    const likes  = +$('likes').value;
+    const posts  = +$('posts').value;
+    const cta    = +$('cta').value/100;
+    const today  = +$('today').value/100;
+    const bot    = +$('bot').value/100;
+    const ticket = +$('ticket').value;
+    const cost   = +$('cost').value;
+    const food   = +$('food').value/100;
+    const drv    = +$('drivers').value;
+    const mot    = +$('mot').value;
+    const daily  = +$('daily').value;
+
+    $('v_fol').textContent = fol.toLocaleString('en-US');
+    $('v_likes').textContent = likes.toLocaleString('en-US');
+    $('v_posts').textContent = posts;
+    $('v_cta').textContent = +$('cta').value + '%';
+    $('v_today').textContent = +$('today').value + '%';
+    $('v_bot').textContent = +$('bot').value + '%';
+    $('v_ticket').textContent = ticket;
+    $('v_cost').textContent = cost.toLocaleString('en-US');
+    $('v_food').textContent = +$('food').value + '%';
+    $('v_drivers').textContent = drv;
+    $('v_mot').textContent = '$' + mot.toLocaleString('en-US');
+    $('v_daily').textContent = '$' + daily;
+
+    // Alcance promedio: likes son ~10% del reach del post
+    const reachPerPost = likes * 10;
+    const totalReach   = Math.min(reachPerPost * posts, fol * 12);
+
+    const chats  = totalReach * cta;
+    const oToday = chats * today;
+    const oBot   = chats * bot;
+    const extra  = (oBot - oToday) * ticket;
+
+    const sales  = cost / (1 - food);
+    const fivePct = fol * 0.05 * ticket;
+
+    const fee1 = 400 + Math.round(extra * 0.03);
+    const fee3 = Math.round(extra * 0.05);
+
+    // Motorizados: el crecimiento de pedidos aplica a sus viajes
+    const gain   = oToday > 0 ? (oBot - oToday) / oToday : 0; // +100% si se duplica
+    const motNew = mot * (1 + gain);
+    const pagoMes= daily * 30;
+    const motNeto= motNew - pagoMes;
+    const aporte = drv * pagoMes;
+    const cobertura = Math.round((aporte / GHL) * 100);
+
+    $('r_reach').textContent = fmtn(totalReach);
+    $('r_chats').textContent = fmtn(chats);
+    $('r_today').textContent = fmtn(oToday);
+    $('r_bot').textContent   = fmtn(oBot);
+    $('r_extra').textContent = fmtE(extra);
+    $('r_5pct').textContent  = fmtE(fivePct);
+    $('r_sales').textContent = fmtE(sales);
+    $('r_fee1').textContent  = fmtE(fee1) + '/mes';
+    $('r_fee3').textContent  = fmtE(fee3) + '/mes';
+
+    $('r_mot_new').textContent   = fmtD(motNew);
+    $('r_mot_neto').textContent  = fmtD(motNeto);
+    $('r_mot_aporte').textContent= fmtD(aporte);
+    $('r_mot_ghl').textContent   = cobertura + '%';
+  }
+  ['fol','likes','posts','cta','today','bot','ticket','cost','food','drivers','mot','daily'].forEach(id => {
+    $(id).addEventListener('input', calc);
+  });
+  calc();
+</script>
+</body>
+</html>
