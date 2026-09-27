@@ -226,10 +226,13 @@ const menu=[
  ['Portan solo','2'],['Promo Especial (20 pz + tequeños)','15'],['Promo Carrizal (40 pz)','15'],['Por un pote','2'],['Promo Mamá Mía (24 pz)','9'],
  ['Promo Chinito Japón','13'],['Promo Barbie','10']
 ];
-document.getElementById('menu').innerHTML='<div class="menu">'+menu.map(m=>'<div class="m-item"><span>'+m[0]+'</span><span class="p">$'+m[1]+'</span></div>').join('')+'</div><div class="note" style="margin-top:10px;">22 productos principales · promedio ≈ $'+fmt(menu.reduce((a,m)=>a+ +m[1],0)/menu.length)+' por promo.</div>';
+function showMenu(){
+  document.getElementById('menu').innerHTML='<div class="menu">'+menu.map(m=>'<div class="m-item"><span>'+m[0]+'</span><span class="p">'+cur+m[1]+'</span></div>').join('')+'</div><div class="note" style="margin-top:10px;">22 productos principales · promedio ≈ '+cur+fmt(menu.reduce((a,m)=>a+ +m[1],0)/menu.length)+' por promo (precio publicado en $ en Instagram).</div>';
+}
+showMenu();
 const fmt1=n=>new Intl.NumberFormat('es-ES',{maximumFractionDigits:1}).format(n);
 function setMon(c){ cur=c; document.getElementById('m_usd').classList.toggle('act',c==='$');
-  document.getElementById('m_eur').classList.toggle('act',c==='€'); calc(); }
+  document.getElementById('m_eur').classList.toggle('act',c==='€'); calc(); showMenu(); }
 function calc(){
   const r1=+document.getElementById('r1').value, r2=+document.getElementById('r2').value;
   const r3=+document.getElementById('r3').value, r4=+document.getElementById('r4').value;
