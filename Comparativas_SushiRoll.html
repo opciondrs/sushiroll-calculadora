@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sushi Roll — Lo que hoy se está perdiendo (2 comparativas)</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#f4f7fb; font-family:'Segoe UI',system-ui,sans-serif; color:#121212; padding:18px 12px 60px; }
+  .wrap { max-width:1080px; margin:0 auto; }
+  .hero { background:linear-gradient(135deg,#0C4DA2,#1e73be); border-radius:18px; padding:28px 30px; color:#fff; box-shadow:0 14px 40px rgba(12,77,162,.25); }
+  .hero h1 { font-size:27px; letter-spacing:.3px; }
+  .hero p { margin-top:8px; opacity:.92; font-size:14.5px; }
+  .kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:16px 0 4px; }
+  .kpi { background:#fff; border:1px solid #e3e9f2; border-left:5px solid #0C4DA2; border-radius:12px; padding:12px 14px; box-shadow:0 4px 14px rgba(0,0,0,.05); }
+  .kpi .n { font-size:22px; font-weight:800; color:#0C4DA2; }
+  .kpi .l { font-size:12px; color:#5b6b85; margin-top:2px; }
+  .kpi.warn .n { color:#cf2e2e; }
+
+  h2.sec { display:flex; align-items:center; gap:10px; font-size:20px; margin:34px 0 6px; color:#121212; }
+  h2.sec .tag { background:#0C4DA2; color:#fff; font-size:12px; font-weight:800; padding:3px 10px; border-radius:20px; }
+  .sub { color:#5b6b85; font-size:13.5px; margin-bottom:14px; }
+
+  /* Comparativa A - tabla */
+  .cmp { width:100%; border-collapse:separate; border-spacing:0; background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 8px 28px rgba(0,0,0,.07); font-size:14px; }
+  .cmp th { padding:12px 14px; font-size:13px; text-align:left; }
+  .cmp th.hoy { background:#fdecec; color:#b02020; border-bottom:3px solid #cf2e2e; }
+  .cmp th.sis { background:#eafaf1; color:#0b7a43; border-bottom:3px solid #00d084; }
+  .cmp th.etp { background:#0C4DA2; color:#fff; }
+  .cmp td { padding:12px 14px; vertical-align:top; border-top:1px solid #eef2f7; line-height:1.5; }
+  .cmp td.etp { background:#f6f9fd; font-weight:700; color:#0C4DA2; white-space:nowrap; }
+  .cmp td.hoy { background:#fff8f8; color:#4a2222; }
+  .cmp td.sis { background:#f7fdfa; color:#173b26; }
+  .chp { display:inline-block; font-size:12px; font-weight:800; padding:2px 9px; border-radius:14px; margin-top:5px; }
+  .chp.bad { background:#cf2e2e; color:#fff; }
+  .chp.ok { background:#00d084; color:#fff; }
+  .chp.warn { background:#fcb900; color:#3a2e00; }
+  .perm { font-weight:800; white-space:nowrap; }
+  .perm.red { color:#cf2e2e; }
+  .perm.grn { color:#0b9b57; }
+  .bar { height:12px; border-radius:8px; margin-top:6px; max-width:180px; }
+  .bar.red { background:linear-gradient(90deg,#f3b6b6,#cf2e2e); }
+  .bar.grn { background:linear-gradient(90deg,#b9f5d5,#00d084); }
+
+  /* Comparativa B - calculadora */
+  .calc { background:#fff; border-radius:16px; padding:22px 22px 18px; box-shadow:0 8px 28px rgba(0,0,0,.07); }
+  .rows { display:grid; grid-template-columns:repeat(auto-fit,minmax(460px,1fr)); gap:10px 26px; }
+  .row { margin-bottom:4px; }
+  .row .lab { display:flex; justify-content:space-between; font-size:13.5px; font-weight:600; margin-bottom:2px; }
+  .row .lab b { color:#0C4DA2; }
+  input[type=range] { width:100%; accent-color:#0C4DA2; }
+  .out { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; margin-top:18px; }
+  .card { background:#f6f9fd; border-radius:12px; padding:14px 16px; border:1px solid #e3e9f2; }
+  .card h4 { font-size:12.5px; color:#5b6b85; text-transform:uppercase; letter-spacing:.5px; }
+  .card .big { font-size:26px; font-weight:800; margin-top:4px; }
+  .card.red h4 { color:#b02020; } .card.red { background:#fff5f5; border-color:#f5c9c9; } .card.red .big { color:#cf2e2e; }
+  .card.grn h4 { color:#0b7a43; } .card.grn { background:#f3fcf7; border-color:#bfeed4; } .card.grn .big { color:#0b9b57; }
+  .card.blue .big { color:#0C4DA2; }
+  .card .s { font-size:12px; color:#5b6b85; margin-top:2px; }
+
+  .conc { margin-top:18px; background:#121212; color:#fff; border-radius:16px; padding:20px 24px; display:flex; gap:18px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+  .conc b { color:#ffd27a; }
+  .conc .cta { background:#fff; color:#0C4DA2; font-weight:800; padding:12px 22px; border-radius:10px; font-size:14px; }
+
+  .note { margin-top:10px; color:#7a869c; font-size:12px; line-height:1.6; }
+  .foot { margin-top:22px; text-align:center; color:#93a1b8; font-size:12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <h1>Sushi Roll — Lo que hoy se está perdiendo</h1>
+    <p>Dos comparativas para ver con claridad qué pasa con cada cliente que escribe, y cuánto dinero se escapa sin sistema.</p>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="n">175.000</div><div class="l">Seguidores en Instagram</div></div>
+    <div class="kpi"><div class="n">~250</div><div class="l">Likes por publicación</div></div>
+    <div class="kpi warn"><div class="n">0,14%</div><div class="l">Engagement (muy bajo)</div></div>
+    <div class="kpi warn"><div class="n">2</div><div class="l">Pedidos el último día visto</div></div>
+    <div class="kpi"><div class="n">3</div><div class="l">Motorizados independientes</div></div>
+  </div>
+
+  <h2 class="sec"><span class="tag">1</span> El recorrido del cliente — HOY vs CON SISTEMA</h2>
+  <div class="sub">Dónde se pierde cada venta antes de llegar a la cocina.</div>
+
+  <table class="cmp">
+    <tr>
+      <th class="etp">Paso</th>
+      <th class="hoy">HOY (sin sistema)</th>
+      <th class="sis">CON SISTEMA</th>
+    </tr>
+    <tr>
+      <td class="etp">1 · Llega el mensaje</td>
+      <td class="hoy">Aparece en el WhatsApp y nadie puede medir cuántos llegan ni a qué hora.</td>
+      <td class="sis">Cada mensaje queda registrado, contado y con hora exacta.</td>
+    </tr>
+    <tr>
+      <td class="etp">2 · Respuesta</td>
+      <td class="hoy">Contesta alguien "cuando puede". Minutos u horas después, o nunca.<div class="bar red" style="width:70%"></div></td>
+      <td class="sis">Responde en <b>2 segundos</b>, 24/7, hasta de madrugada.<div class="bar grn" style="width:12%"></div></td>
+    </tr>
+    <tr>
+      <td class="etp">3 · Menú y precios</td>
+      <td class="hoy">Se escriben los precios a mano, una y otra vez. Si se demora, el cliente se va.</td>
+      <td class="sis">El menú completo con fotos llega solo, al instante.</td>
+    </tr>
+    <tr>
+      <td class="etp">4 · Fuera de horario</td>
+      <td class="hoy">Si llega de noche o en apagón, nadie contesta: <span class="perm red">se pierde</span>.<span class="chp bad">PERDIDO</span></td>
+      <td class="sis">El asistente sigue, toma el pedido y lo cobra aunque nadie esté viendo el teléfono.</td>
+    </tr>
+    <tr>
+      <td class="etp">5 · Cobro</td>
+      <td class="hoy">Manual, al final. Se olvida el pago, queda "pendiente" o se cobra tarde.</td>
+      <td class="sis">El pago queda <b>confirmado antes</b> de preparar el pedido.</td>
+    </tr>
+    <tr>
+      <td class="etp">6 · Registro del cliente</td>
+      <td class="hoy">No queda ningún registro. El cliente que compró hoy es un desconocido mañana.</td>
+      <td class="sis">Cada cliente queda fichado: qué pide, cuánto gasta, cada cuánto vuelve.</td>
+    </tr>
+    <tr>
+      <td class="etp">7 · Recompra</td>
+      <td class="hoy">Si el cliente no vuelve, no vuelve. <span class="perm red">Nadie lo busca</span>. Y con 175K seguidores, el último pedido se escapó: solo <span class="perm red">2 pedidos</span> el último día.</td>
+      <td class="sis">El sistema detecta a quien dejó de comprar y lo <b>invita a volver solo</b>. Más pedidos = más viajes para los motorizados.<span class="chp ok">RECUPERA</span></td>
+    </tr>
+  </table>
+
+  <h2 class="sec"><span class="tag">2</span> Los números — lo que se pierde al mes</h2>
+  <div class="sub">Mueve las perillas a los valores reales del restaurante y fíjate cuántos euros se escapan hoy.</div>
+
+  <div class="calc">
+    <div class="rows">
+      <div class="row">
+        <div class="lab"><span>Clientes que escriben al día</span><b id="v1">20</b></div>
+        <input type="range" id="r1" min="5" max="80" value="20" oninput="calc()">
+      </div>
+      <div class="row">
+        <div class="lab"><span>Ticket promedio por pedido (€)</span><b id="v2">20</b></div>
+        <input type="range" id="r2" min="10" max="50" value="20" oninput="calc()">
+      </div>
+      <div class="row">
+        <div class="lab"><span>% de esos clientes que hoy se pierden (demora, horario, cobro)</span><b id="v3">50</b></div>
+        <input type="range" id="r3" min="10" max="80" value="50" oninput="calc()">
+      </div>
+      <div class="row">
+        <div class="lab"><span>% que compraría con un sistema que responde 24/7</span><b id="v4">85</b></div>
+        <input type="range" id="r4" min="30" max="95" value="85" oninput="calc()">
+      </div>
+    </div>
+    <div class="out" id="out"></div>
+    <div class="note">Por defecto: 20 mensajes/día, ticket €20, 50% de pérdida sin sistema, 85% de cierre con sistema. Ajusta con los datos reales del restaurante.</div>
+  </div>
+
+  <div class="conc">
+    <div>
+      <div style="font-size:15px;font-weight:700;">Conclusión de las 2 comparativas</div>
+      <div style="margin-top:6px;font-size:13.5px;line-height:1.6;color:#dfe6f0;">El problema no es falta de clientes (175K seguidores): es <b>falta de respuesta</b>.<br>Un sistema que contesta, cobra y recupera clientes <b>se paga solo desde el primer mes</b>.</div>
+    </div>
+    <div class="cta">NexuAlpha AI</div>
+  </div>
+
+  <div class="foot">Sushi Roll · Documento comparativo · NexuAlpha AI · Sin marcas de terceros · leadlatam8@gmail.com</div>
+</div>
+
+<script>
+const fmt=n=>new Intl.NumberFormat('es-ES',{maximumFractionDigits:0}).format(Math.round(n));
+const fmt1=n=>new Intl.NumberFormat('es-ES',{maximumFractionDigits:1}).format(n);
+function calc(){
+  const r1=+document.getElementById('r1').value, r2=+document.getElementById('r2').value;
+  const r3=+document.getElementById('r3').value, r4=+document.getElementById('r4').value;
+  document.getElementById('v1').textContent=r1; document.getElementById('v2').textContent=r2+' €';
+  document.getElementById('v3').textContent=r3+'%'; document.getElementById('v4').textContent=r4+'%';
+  const ventas_sis=r1*r4/100;               // pedidos/día que se harían con sistema
+  const ventas_hoy=r1*(100-r3)/100;         // pedidos/día que se hacen hoy
+  const perdidos_dia=r1*r3/100;             // clientes/día que hoy se pierden
+  const perdido_dia=perdidos_dia*r2;        // €/día perdidos
+  const perdido_mes=perdido_dia*30;
+  const perdido_ano=perdido_dia*360;
+  const extra_dia=(ventas_sis-ventas_hoy)*r2;
+  const extra_mes=extra_dia*30;
+  const recuperado_mes=perdido_mes;         // € perdidos hoy = lo recuperable
+
+  const out=document.getElementById('out');
+  out.innerHTML=
+    '<div class="card red"><h4>Perdidos cada día</h4><div class="big">'+fmt1(perdidos_dia)+'</div><div class="s">clientes que escriben y hoy no compran</div></div>'+
+    '<div class="card red"><h4>Se te escapa al día</h4><div class="big">€'+fmt(perdido_dia)+'</div><div class="s">'+fmt1(perdidos_dia)+' × ticket €'+r2+'</div></div>'+
+    '<div class="card red"><h4>Se te escapa al mes</h4><div class="big">€'+fmt(perdido_mes)+'</div><div class="s">&asymp; '+fmt(perdido_mes/r2)+' pedidos perdidos</div></div>'+
+    '<div class="card red"><h4>Se te escapa al año</h4><div class="big">€'+fmt(perdido_ano)+'</div><div class="s">sin contar lo que dejan de volver</div></div>'+
+    '<div class="card grn"><h4>Lo que recuperaría el sistema</h4><div class="big">€'+fmt(extra_mes)+'/mes</div><div class="s">ventas hoy €'+fmt(ventas_hoy*r2*30)+'/mes → €'+fmt(ventas_sis*r2*30)+'/mes</div></div>'+
+    '<div class="card blue"><h4>Ventaja neta</h4><div class="big">×'+fmt1(extra_mes/450)+' el costo</div><div class="s">un sistema de €400-700/mes quedando +€'+fmt(extra_mes)+'/mes</div></div>';
+}
+calc();
+</script>
+</body>
+</html>
