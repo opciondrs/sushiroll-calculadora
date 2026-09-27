@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SushiHouse — Análisis del negocio</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#f4f7fb; font-family:'Segoe UI',system-ui,sans-serif; color:#121212; padding:18px 12px 60px; }
+  .wrap { max-width:1080px; margin:0 auto; }
+  .hero { background:linear-gradient(135deg,#0C4DA2,#1e73be); border-radius:18px; padding:28px 30px; color:#fff; box-shadow:0 14px 40px rgba(12,77,162,.25); }
+  .hero h1 { font-size:26px; letter-spacing:.3px; }
+  .hero p { margin-top:8px; opacity:.92; font-size:14.5px; }
+  .kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:16px 0 4px; }
+  .kpi { background:#fff; border:1px solid #e3e9f2; border-left:5px solid #0C4DA2; border-radius:12px; padding:12px 14px; box-shadow:0 4px 14px rgba(0,0,0,.05); }
+  .kpi .n { font-size:21px; font-weight:800; color:#0C4DA2; }
+  .kpi .l { font-size:12px; color:#5b6b85; margin-top:2px; }
+  .kpi.warn .n { color:#cf2e2e; }
+
+  .card { background:#fff; border-radius:14px; padding:20px 22px; box-shadow:0 8px 28px rgba(0,0,0,.07); }
+  .profile { display:grid; grid-template-columns:1fr 1.6fr; gap:18px; align-items:start; }
+  @media(max-width:720px){ .profile{ grid-template-columns:1fr; } }
+  .phead h3 { font-size:17px; color:#0C4DA2; }
+  .phead .ig { font-size:13px; color:#5b6b85; margin-top:2px; }
+  .phead .bio { margin-top:10px; font-size:13.5px; line-height:1.65; color:#333; }
+  .plist { list-style:none; }
+  .plist li { display:flex; gap:8px; font-size:13.5px; padding:6px 0; border-bottom:1px dashed #e3e9f2; line-height:1.5; }
+  .plist li:last-child { border-bottom:none; }
+  .plist b { color:#0C4DA2; white-space:nowrap; }
+
+  h2.sec { display:flex; align-items:center; gap:10px; font-size:20px; margin:34px 0 6px; }
+  h2.sec .tag { background:#0C4DA2; color:#fff; font-size:12px; font-weight:800; padding:3px 10px; border-radius:20px; }
+  .sub { color:#5b6b85; font-size:13.5px; margin-bottom:14px; }
+
+  .diag { list-style:none; display:grid; gap:10px; }
+  .diag li { background:#fff; border-radius:10px; padding:12px 14px 12px 44px; position:relative; font-size:14px; line-height:1.5; box-shadow:0 2px 10px rgba(0,0,0,.05); }
+  .diag li::before { content:"!"; position:absolute; left:12px; top:12px; width:20px; height:20px; border-radius:50%; background:#fcb900; color:#3a2e00; font-weight:800; font-size:13px; text-align:center; line-height:20px; }
+  .diag li b { color:#b02020; }
+
+  .cmp { width:100%; border-collapse:separate; border-spacing:0; background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 8px 28px rgba(0,0,0,.07); font-size:14px; }
+  .cmp th { padding:12px 14px; font-size:13px; text-align:left; }
+  .cmp th.hoy { background:#fdecec; color:#b02020; border-bottom:3px solid #cf2e2e; }
+  .cmp th.sis { background:#eafaf1; color:#0b7a43; border-bottom:3px solid #00d084; }
+  .cmp th.etp { background:#0C4DA2; color:#fff; }
+  .cmp td { padding:12px 14px; vertical-align:top; border-top:1px solid #eef2f7; line-height:1.5; }
+  .cmp td.etp { background:#f6f9fd; font-weight:700; color:#0C4DA2; white-space:nowrap; }
+  .cmp td.hoy { background:#fff8f8; color:#4a2222; }
+  .cmp td.sis { background:#f7fdfa; color:#173b26; }
+  .chp { display:inline-block; font-size:12px; font-weight:800; padding:2px 9px; border-radius:14px; margin-top:5px; }
+  .chp.bad { background:#cf2e2e; color:#fff; }
+  .chp.ok { background:#00d084; color:#fff; }
+  .perm { font-weight:800; white-space:nowrap; }
+  .perm.red { color:#cf2e2e; }
+  .bar { height:12px; border-radius:8px; margin-top:6px; max-width:180px; }
+  .bar.red { background:linear-gradient(90deg,#f3b6b6,#cf2e2e); }
+  .bar.grn { background:linear-gradient(90deg,#b9f5d5,#00d084); }
+
+  .calc { background:#fff; border-radius:16px; padding:22px 22px 18px; box-shadow:0 8px 28px rgba(0,0,0,.07); }
+  .mon { display:flex; gap:8px; margin-bottom:16px; }
+  .mon button { flex:1; max-width:120px; padding:9px; border-radius:10px; border:2px solid #e3e9f2; background:#fff; font-weight:800; font-size:14px; color:#121212; cursor:pointer; }
+  .mon button.act { border-color:#0C4DA2; background:#0C4DA2; color:#fff; }
+  .rows { display:grid; grid-template-columns:repeat(auto-fit,minmax(460px,1fr)); gap:10px 26px; }
+  .row { margin-bottom:4px; }
+  .row .lab { display:flex; justify-content:space-between; font-size:13.5px; font-weight:600; margin-bottom:2px; }
+  .row .lab b { color:#0C4DA2; }
+  input[type=range] { width:100%; accent-color:#0C4DA2; }
+  .out { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; margin-top:18px; }
+  .cardo { background:#f6f9fd; border-radius:12px; padding:14px 16px; border:1px solid #e3e9f2; }
+  .cardo h4 { font-size:12.5px; color:#5b6b85; text-transform:uppercase; letter-spacing:.5px; }
+  .cardo .big { font-size:25px; font-weight:800; margin-top:4px; }
+  .cardo.red h4 { color:#b02020; } .cardo.red { background:#fff5f5; border-color:#f5c9c9; } .cardo.red .big { color:#cf2e2e; }
+  .cardo.grn h4 { color:#0b7a43; } .cardo.grn { background:#f3fcf7; border-color:#bfeed4; } .cardo.grn .big { color:#0b9b57; }
+  .cardo.blue .big { color:#0C4DA2; }
+  .cardo .s { font-size:12px; color:#5b6b85; margin-top:2px; }
+
+  .conc { margin-top:18px; background:#121212; color:#fff; border-radius:16px; padding:20px 24px; display:flex; gap:18px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+  .conc b { color:#ffd27a; }
+  .conc .cta { background:#fff; color:#0C4DA2; font-weight:800; padding:12px 22px; border-radius:10px; font-size:14px; }
+
+  .note { margin-top:10px; color:#7a869c; font-size:12px; line-height:1.6; }
+  .foot { margin-top:22px; text-align:center; color:#93a1b8; font-size:12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <h1>SushiHouse — Análisis del negocio</h1>
+    <p>La Casa del Sushi · Carrizal, Altos Mirandinos · Análisis del modelo actual, las pérdidas que produce y lo que un sistema de atención 24/7 recuperaría.</p>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="n">25.500</div><div class="l">Seguidores en Instagram</div></div>
+    <div class="kpi warn"><div class="n">3</div><div class="l">WhatsApp sin centralizar</div></div>
+    <div class="kpi warn"><div class="n">9 h/día</div><div class="l">Atención manual (12:00–21:00)</div></div>
+    <div class="kpi"><div class="n">2</div><div class="l">Canales: Delivery + Pick up</div></div>
+    <div class="kpi"><div class="n">107</div><div class="l">Publicaciones en IG</div></div>
+  </div>
+
+  <h2 class="sec"><span class="tag">1</span> Quién es y cómo opera hoy</h2>
+  <div class="card profile">
+    <div class="phead">
+      <h3>@sushihouse_vzla</h3>
+      <div class="ig">La Casa del Sushi · 25.5K seguidores · 107 posts · 969 seguidos</div>
+      <div class="bio">🍣 La Casa del Sushi en los Altos Mirandinos<br>▫️ Lunes a Domingo 12:00 PM a 9:00 PM<br>▫️ Delivery &amp; Pick up<br>▫️ Carrizal, Miranda, Venezuela</div>
+    </div>
+    <ul class="plist">
+      <li><b>3 WhatsApps:</b> wa.me/584127667342 + 2 líneas más — la misma persona salta entre chats.</li>
+      <li><b>Atención:</b> 100% manual, solo en horario de 12:00 a 21:00.</li>
+      <li><b>Modelo:</b> Delivery (envío) + Pick up (retiran en tienda).</li>
+      <li><b>Registro:</b> sin base de datos de clientes ni seguimiento de recompra.</li>
+      <li><b>Números clave:</b> pedidos/día y ticket promedio aún por confirmar con Ezequiel.</li>
+    </ul>
+  </div>
+
+  <h2 class="sec"><span class="tag">2</span> Diagnóstico — complejidades detectadas</h2>
+  <ul class="diag">
+    <li><b>3 líneas de WhatsApp sin orden.</b> El negocio vende por 3 números, pero se atiende igual que con uno: si Ezequiel está en la línea A, las líneas B y C esperan. Un pedido por 3 se cae.</li>
+    <li><b>Todo depende de una persona y un horario.</b> Fuera de 12:00–21:00 nadie contesta. Los mensajes de la noche se responden al otro día (o nunca).</li>
+    <li><b>Menos audiencia que la competencia, menos margen de error.</b> Con 25.5K seguidores cada cliente que escribe vale oro: perder uno por demora duele más que en un negocio con 175K.</li>
+    <li><b>Dos canales (Delivery + Pick up) sin control.</b> Se coordinan "a como se pueda", sin orden de llegada ni confirmación de pago.</li>
+    <li><b>Cero recompra.</b> Nadie lo registra cuando compró ni lo invita a volver. El 100% de la venta depende de que el cliente caiga de nuevo por sí solo.</li>
+  </ul>
+
+  <h2 class="sec"><span class="tag">3</span> El recorrido del cliente — HOY vs CON SISTEMA</h2>
+  <div class="sub">Ezequiel ve dónde se pierde cada venta en cada paso.</div>
+
+  <table class="cmp">
+    <tr>
+      <th class="etp">Paso</th>
+      <th class="hoy">HOY (sin sistema)</th>
+      <th class="sis">CON SISTEMA</th>
+    </tr>
+    <tr>
+      <td class="etp">1 · Llega el mensaje</td>
+      <td class="hoy">Entra a 1 de 3 WhatsApps al azar. Nadie puede medir cuántos llegan ni por cuál línea.</td>
+      <td class="sis">Los 3 números entran a <b>un solo panel</b>: se ve todo junto y por línea.</td>
+    </tr>
+    <tr>
+      <td class="etp">2 · Respuesta</td>
+      <td class="hoy">Contesta Ezequiel "cuando puede", un chat a la vez. Mientras atiende la línea A, B y C esperan.<div class="bar red" style="width:70%"></div></td>
+      <td class="sis">Responde en <b>2 segundos</b> en las 3 líneas a la vez, 24/7.<div class="bar grn" style="width:12%"></div></td>
+    </tr>
+    <tr>
+      <td class="etp">3 · Menú y precios</td>
+      <td class="hoy">Precios escritos a mano en cada conversación, toda la tarde.</td>
+      <td class="sis">El menú con fotos llega solo, al instante, en cualquier línea.</td>
+    </tr>
+    <tr>
+      <td class="etp">4 · Fuera de horario</td>
+      <td class="hoy">De 21:01 a 11:59 nadie responde: <span class="perm red">se pierde</span>.<span class="chp bad">PERDIDO</span></td>
+      <td class="sis">El asistente toma el pedido y lo cobra aunque Ezequiel esté durmiendo.</td>
+    </tr>
+    <tr>
+      <td class="etp">5 · Delivery / Pick up</td>
+      <td class="hoy">Se coordina a mano: se confunde pedidos, zonas y quién retira.</td>
+      <td class="sis">El pedido queda claro: envío o retira, hora y dirección confirmadas por el propio cliente.</td>
+    </tr>
+    <tr>
+      <td class="etp">6 · Registro del cliente</td>
+      <td class="hoy">Sin registro. El que compró hoy por la línea B es desconocido mañana.</td>
+      <td class="sis">Cada cliente queda fichado con lo que pide y gasta, sin importar por cuál línea escribió.</td>
+    </tr>
+    <tr>
+      <td class="etp">7 · Recompra</td>
+      <td class="hoy">Nadie busca al que dejó de comprar. Cliente que no vuelve, se fue.</td>
+      <td class="sis">El sistema detecta al inactivo y le <b>invita a volver solo</b>.<span class="chp ok">RECUPERA</span></td>
+    </tr>
+  </table>
+
+  <h2 class="sec"><span class="tag">4</span> Los números — lo que se pierde al mes</h2>
+  <div class="sub">Elige la moneda (€ por defecto). Luego mueve las perillas a los valores reales del negocio y mira cuánto se escapa hoy.</div>
+
+  <div class="calc">
+    <div class="mon">
+      <button id="m_usd" onclick="setMon('$')">$ (USD)</button>
+      <button id="m_eur" class="act" onclick="setMon('€')">€ (Euro)</button>
+    </div>
+    <div class="rows">
+      <div class="row">
+        <div class="lab"><span>Clientes que escriben al día (3 WhatsApps juntos)</span><b id="v1">30</b></div>
+        <input type="range" id="r1" min="5" max="120" value="30" oninput="calc()">
+      </div>
+      <div class="row">
+        <div class="lab"><span>Ticket promedio por pedido (<span id="v2cur">$</span>)</span><b id="v2">18</b></div>
+        <input type="range" id="r2" min="5" max="60" value="18" oninput="calc()">
+      </div>
+      <div class="row">
+        <div class="lab"><span>% de esos clientes que hoy se pierden (demora, horario, despiste de las 3 líneas)</span><b id="v3">50</b></div>
+        <input type="range" id="r3" min="10" max="80" value="50" oninput="calc()">
+      </div>
+      <div class="row">
+        <div class="lab"><span>% que compraría con un sistema que responde 24/7</span><b id="v4">85</b></div>
+        <input type="range" id="r4" min="30" max="95" value="85" oninput="calc()">
+      </div>
+    </div>
+    <div class="out" id="out"></div>
+    <div class="note">Por defecto: 30 mensajes/día, ticket €18, 50% de pérdida sin sistema, 85% de cierre con sistema. Ezequiel ajusta con sus datos reales (pedidos/día y ticket promedio).</div>
+  </div>
+
+  <div class="conc">
+    <div>
+      <div style="font-size:15px;font-weight:700;">Conclusión del análisis</div>
+      <div style="margin-top:6px;font-size:13.5px;line-height:1.6;color:#dfe6f0;">SushiHouse no pierde por falta de clientes: pierde por <b>3 teléfonos atendidos por una sola persona en horario limitado</b>.<br>Un sistema que contesta, cobra, registra y recupera <b>se paga solo desde el primer mes</b>.</div>
+    </div>
+    <div class="cta">NexuAlpha AI</div>
+  </div>
+
+  <div class="foot">SushiHouse (@sushihouse_vzla) · Documento de análisis · NexuAlpha AI · Sin marcas de terceros · leadlatam8@gmail.com</div>
+</div>
+
+<script>
+let cur='€';
+const fmt=n=>new Intl.NumberFormat('es-ES',{maximumFractionDigits:0}).format(Math.round(n));
+const fmt1=n=>new Intl.NumberFormat('es-ES',{maximumFractionDigits:1}).format(n);
+function setMon(c){ cur=c; document.getElementById('m_usd').classList.toggle('act',c==='$');
+  document.getElementById('m_eur').classList.toggle('act',c==='€'); calc(); }
+function calc(){
+  const r1=+document.getElementById('r1').value, r2=+document.getElementById('r2').value;
+  const r3=+document.getElementById('r3').value, r4=+document.getElementById('r4').value;
+  document.getElementById('v1').textContent=r1;
+  document.getElementById('v2').textContent=r2+' '+cur;
+  document.getElementById('v2cur').textContent=cur;
+  document.getElementById('v3').textContent=r3+'%';
+  document.getElementById('v4').textContent=r4+'%';
+  const ventas_sis=r1*r4/100;
+  const ventas_hoy=r1*(100-r3)/100;
+  const perdidos_dia=r1*r3/100;
+  const perdido_dia=perdidos_dia*r2;
+  const perdido_mes=perdido_dia*30;
+  const perdido_ano=perdido_dia*360;
+  const extra_dia=(ventas_sis-ventas_hoy)*r2;
+  const extra_mes=extra_dia*30;
+  document.getElementById('out').innerHTML=
+    '<div class="cardo red"><h4>Perdidos cada día</h4><div class="big">'+fmt1(perdidos_dia)+'</div><div class="s">clientes que escriben y hoy no compran</div></div>'+
+    '<div class="cardo red"><h4>Se te escapa al día</h4><div class="big">'+cur+fmt(perdido_dia)+'</div><div class="s">'+fmt1(perdidos_dia)+' × ticket '+r2+'</div></div>'+
+    '<div class="cardo red"><h4>Se te escapa al mes</h4><div class="big">'+cur+fmt(perdido_mes)+'</div><div class="s">&asymp; '+fmt(perdido_mes/r2)+' pedidos perdidos</div></div>'+
+    '<div class="cardo red"><h4>Se te escapa al año</h4><div class="big">'+cur+fmt(perdido_ano)+'</div><div class="s">sin contar la recompra perdida</div></div>'+
+    '<div class="cardo grn"><h4>Recuperable con sistema</h4><div class="big">'+cur+fmt(extra_mes)+'/mes</div><div class="s">hoy ventas '+cur+fmt(ventas_hoy*r2*30)+'/mes → '+cur+fmt(ventas_sis*r2*30)+'/mes</div></div>'+
+    '<div class="cardo blue"><h4>Ventaja neta</h4><div class="big">×'+fmt1(extra_mes/450)+' el costo</div><div class="s">un sistema de pago '+cur+' queda sobrado con +'+cur+fmt(extra_mes)+'/mes</div></div>';
+}
+calc();
+</script>
+</body>
+</html>
