@@ -64,6 +64,9 @@
   .row .lab { display:flex; justify-content:space-between; font-size:13.5px; font-weight:600; margin-bottom:2px; }
   .row .lab b { color:#0C4DA2; }
   input[type=range] { width:100%; accent-color:#0C4DA2; }
+  .menu { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:8px 16px; }
+  .m-item { display:flex; justify-content:space-between; gap:10px; font-size:13.5px; padding:7px 10px; background:#f8fafc; border-radius:8px; border:1px solid #eef2f7; }
+  .m-item .p { font-weight:800; color:#0C4DA2; white-space:nowrap; }
   .out { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; margin-top:18px; }
   .cardo { background:#f6f9fd; border-radius:12px; padding:14px 16px; border:1px solid #e3e9f2; }
   .cardo h4 { font-size:12.5px; color:#5b6b85; text-transform:uppercase; letter-spacing:.5px; }
@@ -109,11 +112,15 @@
       <li><b>Atención:</b> 100% manual, solo en horario de 12:00 a 21:00.</li>
       <li><b>Modelo:</b> Delivery (envío) + Pick up (retiran en tienda).</li>
       <li><b>Registro:</b> sin base de datos de clientes ni seguimiento de recompra.</li>
-      <li><b>Números clave:</b> pedidos/día y ticket promedio aún por confirmar con Ezequiel.</li>
+      <li><b>Menu en IG:</b> ~25 productos publicados con precio (promedio ≈ $9.8) → ticket estimado €10. Faltan: pedidos/día y ticket real.</li>
     </ul>
   </div>
 
-  <h2 class="sec"><span class="tag">2</span> Diagnóstico — complejidades detectadas</h2>
+  <h2 class="sec"><span class="tag">2</span> Menú publicado en Instagram</h2>
+  <div class="sub">Precios leídos de las publicaciones de @sushihouse_vzla (en $ según la app; cobro confirmado en €).</div>
+  <div class="card" id="menu"></div>
+
+  <h2 class="sec"><span class="tag">3</span> Diagnóstico — complejidades detectadas</h2>
   <ul class="diag">
     <li><b>3 líneas de WhatsApp sin orden.</b> El negocio vende por 3 números, pero se atiende igual que con uno: si Ezequiel está en la línea A, las líneas B y C esperan. Un pedido por 3 se cae.</li>
     <li><b>Todo depende de una persona y un horario.</b> Fuera de 12:00–21:00 nadie contesta. Los mensajes de la noche se responden al otro día (o nunca).</li>
@@ -122,7 +129,7 @@
     <li><b>Cero recompra.</b> Nadie lo registra cuando compró ni lo invita a volver. El 100% de la venta depende de que el cliente caiga de nuevo por sí solo.</li>
   </ul>
 
-  <h2 class="sec"><span class="tag">3</span> El recorrido del cliente — HOY vs CON SISTEMA</h2>
+  <h2 class="sec"><span class="tag">4</span> El recorrido del cliente — HOY vs CON SISTEMA</h2>
   <div class="sub">Ezequiel ve dónde se pierde cada venta en cada paso.</div>
 
   <table class="cmp">
@@ -168,7 +175,7 @@
     </tr>
   </table>
 
-  <h2 class="sec"><span class="tag">4</span> Los números — lo que se pierde al mes</h2>
+  <h2 class="sec"><span class="tag">5</span> Los números — lo que se pierde al mes</h2>
   <div class="sub">Elige la moneda (€ por defecto). Luego mueve las perillas a los valores reales del negocio y mira cuánto se escapa hoy.</div>
 
   <div class="calc">
@@ -182,8 +189,8 @@
         <input type="range" id="r1" min="5" max="120" value="30" oninput="calc()">
       </div>
       <div class="row">
-        <div class="lab"><span>Ticket promedio por pedido (<span id="v2cur">$</span>)</span><b id="v2">18</b></div>
-        <input type="range" id="r2" min="5" max="60" value="18" oninput="calc()">
+        <div class="lab"><span>Ticket promedio por pedido (<span id="v2cur">€</span>)</span><b id="v2">10</b></div>
+        <input type="range" id="r2" min="5" max="60" value="10" oninput="calc()">
       </div>
       <div class="row">
         <div class="lab"><span>% de esos clientes que hoy se pierden (demora, horario, despiste de las 3 líneas)</span><b id="v3">50</b></div>
@@ -195,7 +202,7 @@
       </div>
     </div>
     <div class="out" id="out"></div>
-    <div class="note">Por defecto: 30 mensajes/día, ticket €18, 50% de pérdida sin sistema, 85% de cierre con sistema. Ezequiel ajusta con sus datos reales (pedidos/día y ticket promedio).</div>
+    <div class="note">Por defecto: 30 mensajes/día, ticket €10 (promedio del menú publicado), 50% de pérdida sin sistema, 85% de cierre con sistema. Ezequiel ajusta con sus datos reales (pedidos/día y ticket promedio).</div>
   </div>
 
   <div class="conc">
@@ -212,6 +219,14 @@
 <script>
 let cur='€';
 const fmt=n=>new Intl.NumberFormat('es-ES',{maximumFractionDigits:0}).format(Math.round(n));
+const menu=[
+ ['2 Pizzas','10'],['Arroz Chino','7'],['Promo Doble XL (20 pz)','9'],['Promo Miyazaki (24 pz)','13'],['24 piezas','5'],
+ ['Promo Okinawa (20 pz)','9'],['Promo Chinto Japón','13'],['Plato con persona','10'],['Barco Yokohama','14'],['Promo Tropical (24 pz)','8'],
+ ['Barco Yokohama (grande)','14'],['Promo Romeo','11'],['Potes desde','4'],['Publicación promo','10'],['Barco Kioto','15'],
+ ['Portan solo','2'],['Promo Especial (20 pz + tequeños)','15'],['Promo Carrizal (40 pz)','15'],['Por un pote','2'],['Promo Mamá Mía (24 pz)','9'],
+ ['Promo Chinito Japón','13'],['Promo Barbie','10']
+];
+document.getElementById('menu').innerHTML='<div class="menu">'+menu.map(m=>'<div class="m-item"><span>'+m[0]+'</span><span class="p">$'+m[1]+'</span></div>').join('')+'</div><div class="note" style="margin-top:10px;">22 productos principales · promedio ≈ $'+fmt(menu.reduce((a,m)=>a+ +m[1],0)/menu.length)+' por promo.</div>';
 const fmt1=n=>new Intl.NumberFormat('es-ES',{maximumFractionDigits:1}).format(n);
 function setMon(c){ cur=c; document.getElementById('m_usd').classList.toggle('act',c==='$');
   document.getElementById('m_eur').classList.toggle('act',c==='€'); calc(); }
